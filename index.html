@@ -1,0 +1,448 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="form" id="form" style = "visibility: hidden;">
+    <div class="form__header">
+        <h2>Предпросмотр</h2>
+        <div>
+            <button class="btn btn-primary export-btn" onclick="<%= Scripts%>.saveInElma()">Сохранить в Elma</button>
+            <button class="btn btn-primary export-btn" id="export-btn">Скачать в PDF</button>
+        </div>
+    </div>
+    <div id="element-to-save" style="display: flex; min-height: 80%;"><div class="form__container" id="element-to-export"></div></div>
+</div>
+
+<script>
+    // Скачать в PDF
+    function exportPDF() {
+        const btns = document.querySelectorAll(".delete-on-export");
+
+        for (const btn of btns) {
+            btn.style.display = "none";
+            console.log(btn.style.display);
+        }
+
+        const element = document.getElementById("element-to-export"); // Выбираем элемент
+
+        const options = {
+            margin: 10,
+            filename: 'form.pdf',
+            image: { type: 'png', quality: 1.0 }, // PNG для лучшего качества
+            html2canvas: {
+                scale: 2, // Увеличенный масштаб
+                windowWidth: element.scrollWidth,
+                scrollX: 0,
+                scrollY: 0
+            },
+            jsPDF: {
+                unit: 'mm',
+                format: 'a4',
+                orientation: 'portrait',
+                hotfixes: ['px_scaling'] // Исправление проблем с масштабированием
+            }
+        };
+
+        // Генерация PDF
+        html2pdf().from(element).set(options).save();
+
+        window.setTimeout(() => {
+            for (const btn of btns) {
+                btn.style.display = "inline-block";
+            }
+        }, 300);
+
+    }
+
+    document.getElementById("export-btn").addEventListener('click', exportPDF);
+</script>
+
+<style>
+    .form {
+        padding: 1.4rem 5rem;
+        width: 100%;
+        height: 90vh;
+        border: 1px solid #e9e9e9;
+        margin: 1rem;
+    }
+
+    .form__header {
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem 0;
+    }
+
+    .form__container {
+        display: grid;
+        grid-gap: 1rem;
+        width: 100%;
+    }
+
+    .export-btn {
+        margin-left: auto;
+    }
+
+    .form__container--rigth {        
+        grid-template-columns: 70% 30%;        
+    }
+
+    .form__container--left {        
+        grid-template-columns: 30% 70%;        
+    }
+
+    .form-column {
+        display: grid;
+        padding: 1rem; 
+    }
+
+    .form-column--basic {
+        outline: 1px dashed #ccc;
+        outline-offset: -0.5rem; /* Половина от gap */ 
+        overflow: auto;
+    }
+
+    .form-column--25 {
+        border-radius: 0.8rem; 
+        -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2); 
+        -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2); 
+        box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2); 
+        background: rgba(127, 125, 125, 0.11);
+    }
+
+    .form_column__area {
+        outline: 1px dashed #ccc;
+    }
+
+    .side-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .side-bar__block {
+        border-radius: 0.8rem;  
+        background: #FFF;  
+        border-width: 0px !important;
+        padding: 1.25rem; 
+        overflow: auto;
+    }
+
+    .label {
+        padding: 0.7rem 1.4rem;
+        border-radius: 0.8rem;
+        color: #FFF;
+        display: flex;
+        align-items: center;
+        justify-content: center !important;
+        height: 3.5rem;
+        margin: 0.5rem auto;
+        text-transform: uppercase;
+        width: 100%;
+    }
+
+    .label--blue {
+        background: #007CFF;
+    }
+
+    .label--green {
+        background: #26CD58;
+    }
+
+    .label--yellow {
+        background: #FAB936;
+    }
+
+    .label--brown {
+        background: #F1F1F1;
+        border: 1px solid #262626;
+    }
+
+    .label--light-blue {
+        background: #F6FDFD;
+        border: 1px solid #262626;
+    }
+
+    .label--red {
+        background: #FF0032;
+    }
+
+    .label--dark-grey {
+        background: #262626;
+    }
+
+    .label--light-grey {
+        background: #929292;
+    }
+
+    .label--blue {
+        background: #007CFF;
+    }
+
+    .search-btn {
+        z-index: 1;
+        margin: auto 0 16px -32px;
+        padding: 0;
+        align-self: center;
+    }
+
+    .tooltip-grid {
+        display: grid; 
+        grid-template-columns: 1fr auto;
+        
+    }
+
+    .tooltiptext4 {
+        display: none;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        padding: 0.25rem 0.5rem;
+        position: absolute;
+        z-index: 1000;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s, transform 0.3s;
+        box-shadow: 0 2px 6px rgba(17, 133, 179, 0.08);
+        text-transform: none !important;
+        font-size: 1.2rem;
+        width: 40rem;
+        top: 100%;
+        left: -1000%;
+    }
+
+    svg {
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .tooltip4 {
+        margin: auto auto auto 0.5rem;
+        position: relative;
+    }
+    
+    .tooltip4:hover .tooltiptext4 {
+        display: block;
+        opacity: 1;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    .tooltip4:hover svg {
+        color: #007cff;
+        transform: scale(1.2);
+    }
+
+    .panel {
+        border: 1px solid #e0e0e0;
+        border-radius: 0.8rem;
+        margin: 1rem 0;
+        padding: 1.25rem;
+        width: 100%;
+        overflow: auto;
+    }
+
+    .panel--blue {
+        background: rgba(220, 247, 247, 0.26);
+    }
+
+    .panel--brown {
+        background: rgba(127, 125, 125, 0.11);
+    }
+
+    .panel--white {        
+        background: #FFF;
+    }
+
+    .icon-calendar:before {
+        content: var(--el-b-icon-only-calendar);
+        font-family: elma365-old !important;
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div { /*Общий блок*/
+        border-radius: 8px !important;
+        overflow: hidden;
+        box-sizing: border-box;
+        background: #848484;
+        transition: background-color 0.3s cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > div {
+        overflow: hidden;
+        border: none;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 10px;	
+        transition: transform 0.3s cubic-bezier(0, 1, 0.5, 1);
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > div[aria-labelledby="Да"] {
+        border-radius: 8px 0 0 8px !important;        
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > div[aria-labelledby="Нет"] {
+        border-radius: 0 8px 8px 0 !important;
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > div[aria-checked="true"] {        
+        background: white;
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > div[aria-checked="false"] {
+        background: #848484;
+        color: #e5e5e5;
+    }
+
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > div > 
+    div[aria-labelledby="Да"][aria-checked="true"] {
+        color: #70c767;
+    }
+    .custom-switch > elma-form-control > 
+    elma-type-boolean > elma-switch div.switch-buttons > p-selectbutton > 
+    div > div[aria-labelledby="Нет"][aria-checked="true"] {
+        color: #df352c;
+    }
+
+    .p-button-label {
+        padding: 0.8rem 1.2rem;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #d3d6db;
+    }
+
+    .custom-table thead {
+        background-color: #e7eaf0;
+    }
+
+    .custom-table tbody tr:nth-child(odd) {
+        background-color: #f4f6fa;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
+    .custom-btn {
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+
+    .custom-btn > svg {
+        width: 1.6rem;
+        transition: all .3s ease-out;
+    }
+
+    .custom-btn:hover > svg {
+        transform: scale(1.15);
+        fill: #FF0032;
+    }
+
+    .elma-clue {
+        color: #787878;
+        font-style: italic;
+        font-size: 1.2rem;
+    }
+
+    .card_probabilityOutflow {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        width: 100%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-left: 10px;
+        -webkit-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+        -moz-box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+        box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
+    }
+
+    .title_probabilityOutflow {
+        margin-bottom: 12px;
+        color: #333;
+        font-weight: 600;
+        font-size: 1.6rem;
+        line-height: 2.4rem;
+    }
+
+    .progress-bar_probabilityOutflow {
+        background: #e6e6e6;
+        border-radius: 8px;
+        height: 16px;
+        overflow: hidden;
+    }
+
+    .progress_probabilityOutflow {
+        height: 100%;
+        width:%;
+        background: linear-gradient(90deg, #2e7d32, #a5d6a7);
+        border-radius: 8px 0 0 8px;
+        transition: width 0.2s ease;
+    }
+
+    .percentage_probabilityOutflow {
+        text-align: right;
+        margin-top: 8px;
+        font-size: 14px;
+        color: black;
+    }
+
+    .tab-panel {
+        display: none;
+    }
+
+    .tab-panel.active {
+        display: block !important;
+    }
+
+    .btn-del {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1000;
+    }
+
+    .btn-edit {
+        position: absolute;
+        top: 0;
+        right: 2rem;
+        z-index: 1000;
+    }
+
+    .arrow-div {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 0.25rem;
+        margin: auto;
+        border-radius: 0.25rem;
+        box-shadow: 0 2px 6px rgba(17, 133, 179, 0.08);
+    }
+
+    .arrow-div svg{
+        fill: #007cff;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .arrow-div:hover {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .arrow-div:hover svg {
+        transform: scale(1.2);
+    }
+
+    .arrow-link {
+        text-decoration: none;
+    }
+</style>
